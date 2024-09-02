@@ -8,6 +8,7 @@ use Hashids\Hashids;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsAction;
+use Pirsch\Facades\Pirsch;
 
 class NewGame
 {
