@@ -2,12 +2,11 @@
 
 namespace App\Actions\Game;
 
-use App\Events\PlayerMoved;
-use App\Events\RematchRequested;
 use App\Models\Game;
-use Illuminate\Http\Request;
-use Lorisleiva\Actions\Concerns\AsAction;
 use Pirsch\Facades\Pirsch;
+use Illuminate\Http\Request;
+use App\Events\RematchRequested;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class RequestRematch
 {

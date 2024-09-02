@@ -2,19 +2,17 @@
 
 namespace App\Actions\Game;
 
-use App\Models\Article;
 use App\Models\Game;
-use Hashids\Hashids;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Lorisleiva\Actions\Concerns\AsAction;
 use Pirsch\Facades\Pirsch;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class NewGame
 {
     use AsAction;
 
-    public function handle(Request $request)
+    public function handle(Request $request): RedirectResponse
     {
         $uuid = $this->generateUuid();
         while (Game::where('uuid', $uuid)->exists()) {
@@ -35,7 +33,6 @@ class NewGame
 
         return redirect()->route('game', $game);
     }
-
 
     public function generateUuid()
     {

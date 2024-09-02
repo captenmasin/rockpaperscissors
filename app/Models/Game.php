@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Game extends Model
 {
@@ -23,7 +23,7 @@ class Game extends Model
         'player_two',
         'player_one_move',
         'player_two_move',
-        'winner'
+        'winner',
     ];
 
     public function resetGame()

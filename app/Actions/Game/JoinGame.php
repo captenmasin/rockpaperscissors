@@ -3,9 +3,9 @@
 namespace App\Actions\Game;
 
 use App\Models\Game;
+use Pirsch\Facades\Pirsch;
 use Illuminate\Http\Request;
 use Lorisleiva\Actions\Concerns\AsAction;
-use Pirsch\Facades\Pirsch;
 
 class JoinGame
 {
@@ -13,7 +13,7 @@ class JoinGame
 
     public function handle(Request $request, Game $game)
     {
-        if (!$request->user()) {
+        if (! $request->user()) {
             return redirect()->route('home');
         }
 

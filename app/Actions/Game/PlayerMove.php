@@ -2,12 +2,12 @@
 
 namespace App\Actions\Game;
 
-use App\Events\GameResult;
-use App\Events\PlayerMoved;
 use App\Models\Game;
+use App\Events\GameResult;
+use Pirsch\Facades\Pirsch;
+use App\Events\PlayerMoved;
 use Illuminate\Http\Request;
 use Lorisleiva\Actions\Concerns\AsAction;
-use Pirsch\Facades\Pirsch;
 
 class PlayerMove
 {

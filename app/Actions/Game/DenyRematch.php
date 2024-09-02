@@ -2,12 +2,11 @@
 
 namespace App\Actions\Game;
 
-use App\Events\RematchAccepted;
-use App\Events\RematchDenied;
 use App\Models\Game;
-use Illuminate\Http\Request;
-use Lorisleiva\Actions\Concerns\AsAction;
 use Pirsch\Facades\Pirsch;
+use Illuminate\Http\Request;
+use App\Events\RematchDenied;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class DenyRematch
 {

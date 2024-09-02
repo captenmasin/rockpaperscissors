@@ -4,10 +4,10 @@ namespace App\Actions\Pages;
 
 use App\Models\Game;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class ShowGame
@@ -33,20 +33,20 @@ class ShowGame
 
     public function updatePlayers(Request $request, Game $game)
     {
-//        if (!$request->user()){
-//            return;
-//        }
-//        if ($game->finished()){
-//            return;
-//        }
-//
-//        if (empty($game->player_one)){
-//            $game->update(['player_one' => $request->user()->id]);
-//        }
-//
-//        if (empty($game->player_two) && $game->player_one !== $request->user()->id){
-//            $game->update(['player_two' => $request->user()->id]);
-//        }
+        //        if (!$request->user()){
+        //            return;
+        //        }
+        //        if ($game->finished()){
+        //            return;
+        //        }
+        //
+        //        if (empty($game->player_one)){
+        //            $game->update(['player_one' => $request->user()->id]);
+        //        }
+        //
+        //        if (empty($game->player_two) && $game->player_one !== $request->user()->id){
+        //            $game->update(['player_two' => $request->user()->id]);
+        //        }
     }
 
     public function getCurrentPlayer(User $user, Game $game)
