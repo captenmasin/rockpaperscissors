@@ -26,6 +26,15 @@ class Game extends Model
         'winner'
     ];
 
+    public function resetGame()
+    {
+        $this->update([
+            'player_one_move' => null,
+            'player_two_move' => null,
+            'winner' => null,
+        ]);
+    }
+
     public function finished(): bool
     {
         return $this->player_one_move && $this->player_two_move;

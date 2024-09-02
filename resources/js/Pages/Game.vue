@@ -18,6 +18,7 @@ const playerMove = ref(null);
 const opponentMove = ref(null);
 const opponentHasMoved = ref(false);
 const winner = ref(null);
+const rematchRequested = ref(false);
 
 const makeMove = async (move) => {
     router.post(`/game/${props.game.uuid}/move`, {move: move}, {
@@ -31,7 +32,7 @@ const makeMove = async (move) => {
     });
 };
 
-function joinGame(){
+function joinGame() {
     router.post(`/game/${props.game.uuid}/join`, {}, {
         preserveScroll: true,
         onSuccess: (data) => {
@@ -43,12 +44,56 @@ function joinGame(){
     });
 }
 
+function requestRematch() {
+    router.post(`/game/${props.game.uuid}/rematch`, {}, {
+        preserveScroll: true,
+        onSuccess: (data) => {
+            router.reload()
+        },
+        onError: (error) => {
+            console.error('Failed to join game');
+        }
+    });
+}
+
+function denyRematch() {
+    router.post(`/game/${props.game.uuid}/rematch/deny`, {}, {
+        preserveScroll: true,
+        onSuccess: (data) => {
+            router.reload()
+        },
+        onError: (error) => {
+            console.error('Failed to join game');
+        }
+    });
+}
+
+function acceptRematch() {
+    router.post(`/game/${props.game.uuid}/rematch/accept`, {}, {
+        preserveScroll: true,
+        onSuccess: (data) => {
+            router.reload()
+        },
+        onError: (error) => {
+            console.error('Failed to join game');
+        }
+    });
+}
+
+function reset(){
+    playerMove.value = null;
+    opponentMove.value = null;
+    opponentHasMoved.value = false;
+    winner.value = null;
+    rematchRequested.value = false;
+}
+
 onMounted(() => {
     if (props.currentPlayerMove) {
         playerMove.value = props.currentPlayerMove;
     }
 
-    if((!props.game.player_two || !props.game.player_one) && props.currentPlayer === 'spectator'){
+    if ((!props.game.player_two || !props.game.player_one) && props.currentPlayer === 'spectator') {
         joinGame();
     }
 
@@ -82,7 +127,25 @@ onMounted(() => {
             }
 
             winner.value = event.winner;
-        });
+        })
+        .listen('.RematchRequested', (event) => {
+            if (event.player !== currentUser.id) {
+                rematchRequested.value = true;
+            }
+        })
+        .listen('.RematchDenied', (event) => {
+            if (event.player !== currentUser.id) {
+                alert('Opponent denied rematch');
+            }
+        })
+        .listen('.RematchAccepted', (event) => {
+            router.reload({
+                onSuccess: () => {
+                    reset();
+                }
+            });
+        })
+    ;
 });
 </script>
 
@@ -143,8 +206,21 @@ onMounted(() => {
                     <p v-if="winner === currentPlayer">You win!</p>
                     <p v-if="winner === opponentPlayer">You lose!</p>
                 </div>
+
+                <button v-if="!rematchRequested" @click="requestRematch">
+                    Request rematch
+                </button>
+
+                <div v-if="rematchRequested">
+                    <p>Rematch requested</p>
+                    <button @click="acceptRematch">
+                        Lets do it
+                    </button>
+                    <button @click="denyRematch">
+                        No, loser
+                    </button>
+                </div>
             </div>
         </div>
-        <!--        {{ game }}-->
     </div>
 </template>
