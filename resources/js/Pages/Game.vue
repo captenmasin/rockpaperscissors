@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import {ref, onMounted, computed} from 'vue';
-import {Link, router, usePage} from '@inertiajs/vue3';
+import Share from '@/Components/Share.vue'
+import { ref, onMounted, computed } from 'vue'
+import { Link, router, usePage } from '@inertiajs/vue3'
 
 const props = defineProps({
     game: Object,
@@ -9,144 +10,143 @@ const props = defineProps({
     opponentPlayer: String,
     currentPlayerMove: String,
     opponentPlayerMove: String,
-    winner: String,
-});
+    winner: String
+})
 
-const count = ref(0);
-const currentUser = usePage().props.user;
-const playerMove = ref(null);
-const opponentMove = ref(null);
-const opponentHasMoved = ref(false);
-const winner = ref(null);
-const rematchRequested = ref(false);
+const count = ref(0)
+const currentUser = usePage().props.user
+const playerMove = ref(null)
+const opponentMove = ref(null)
+const opponentHasMoved = ref(false)
+const winner = ref(null)
+const rematchRequested = ref(false)
 
 const makeMove = async (move) => {
-    router.post(`/game/${props.game.uuid}/move`, {move: move}, {
+    router.post(`/game/${props.game.uuid}/move`, { move }, {
         preserveScroll: true,
         onSuccess: (data) => {
-            playerMove.value = move;
+            playerMove.value = move
         },
         onError: (error) => {
-            console.error('Failed to send move');
+            console.error('Failed to send move')
         }
-    });
-};
+    })
+}
 
-function joinGame() {
+function joinGame () {
     router.post(`/game/${props.game.uuid}/join`, {}, {
         preserveScroll: true,
         onSuccess: (data) => {
             router.reload()
         },
         onError: (error) => {
-            console.error('Failed to join game');
+            console.error('Failed to join game')
         }
-    });
+    })
 }
 
-function requestRematch() {
+function requestRematch () {
     router.post(`/game/${props.game.uuid}/rematch`, {}, {
         preserveScroll: true,
         onSuccess: (data) => {
             router.reload()
         },
         onError: (error) => {
-            console.error('Failed to join game');
+            console.error('Failed to join game')
         }
-    });
+    })
 }
 
-function denyRematch() {
+function denyRematch () {
     router.post(`/game/${props.game.uuid}/rematch/deny`, {}, {
         preserveScroll: true,
         onSuccess: (data) => {
             router.reload()
         },
         onError: (error) => {
-            console.error('Failed to join game');
+            console.error('Failed to join game')
         }
-    });
+    })
 }
 
-function acceptRematch() {
+function acceptRematch () {
     router.post(`/game/${props.game.uuid}/rematch/accept`, {}, {
         preserveScroll: true,
         onSuccess: (data) => {
             router.reload()
         },
         onError: (error) => {
-            console.error('Failed to join game');
+            console.error('Failed to join game')
         }
-    });
+    })
 }
 
-function reset(){
-    playerMove.value = null;
-    opponentMove.value = null;
-    opponentHasMoved.value = false;
-    winner.value = null;
-    rematchRequested.value = false;
+function reset () {
+    playerMove.value = null
+    opponentMove.value = null
+    opponentHasMoved.value = false
+    winner.value = null
+    rematchRequested.value = false
 }
 
 onMounted(() => {
     if (props.currentPlayerMove) {
-        playerMove.value = props.currentPlayerMove;
+        playerMove.value = props.currentPlayerMove
     }
 
     if ((!props.game.player_two || !props.game.player_one) && props.currentPlayer === 'spectator') {
-        joinGame();
+        joinGame()
     }
 
     if (props.gameFinished) {
-        opponentHasMoved.value = true;
-        opponentMove.value = props.opponentPlayerMove;
-        winner.value = props.winner;
+        opponentHasMoved.value = true
+        opponentMove.value = props.opponentPlayerMove
+        winner.value = props.winner
     }
 
     Echo.join(`game.${props.game.id}`)
         .here((users) => {
-            count.value = users.length;
+            count.value = users.length
         })
         .joining((user) => {
-            count.value++;
+            count.value++
         })
         .leaving((user) => {
-            count.value--;
+            count.value--
         })
         .listen('.PlayerMoved', (event) => {
             if (event.player !== currentUser.id) {
-                opponentHasMoved.value = true;
+                opponentHasMoved.value = true
             }
         })
         .listen('.GameResult', (event) => {
-            const playerOne = parseInt(event.game.player_one);
+            const playerOne = parseInt(event.game.player_one)
             if (currentUser.id === playerOne) {
-                opponentMove.value = event.game.player_two_move;
+                opponentMove.value = event.game.player_two_move
             } else {
-                opponentMove.value = event.game.player_one_move;
+                opponentMove.value = event.game.player_one_move
             }
 
-            winner.value = event.winner;
+            winner.value = event.winner
         })
         .listen('.RematchRequested', (event) => {
             if (event.player !== currentUser.id) {
-                rematchRequested.value = true;
+                rematchRequested.value = true
             }
         })
         .listen('.RematchDenied', (event) => {
             if (event.player !== currentUser.id) {
-                alert('Opponent denied rematch');
+                alert('Opponent denied rematch')
             }
         })
         .listen('.RematchAccepted', (event) => {
             router.reload({
                 onSuccess: () => {
-                    reset();
+                    reset()
                 }
-            });
+            })
         })
-    ;
-});
+})
 </script>
 
 <template>
@@ -157,6 +157,11 @@ onMounted(() => {
                 New game
             </Link>
         </div>
+        <hr>
+        <Share
+            :url="`/${game.uuid}`"
+            title="Play Rock Paper Scissors"
+            description="Join the game" />
         <h2>Current players: {{ count }}</h2>
         <!--        <h3>Current user {{ currentUser }}</h3>-->
         <!--        <h3>You are {{ parseInt(game.player_one) === currentUser.id ? 'Player one' : 'Player two' }}</h3>-->
@@ -170,17 +175,26 @@ onMounted(() => {
                 <p>Choose your move:</p>
                 <ul class="flex items-center gap-8 text-4xl mt-8">
                     <li>
-                        <button class="bg-black/20 px-4 py-1 rounded-full disabled:opacity-50" :disabled="playerMove" @click="makeMove('rock')">
+                        <button
+                            class="bg-black/20 px-4 py-1 rounded-full disabled:opacity-50"
+                            :disabled="playerMove"
+                            @click="makeMove('rock')">
                             🪨 Rock
                         </button>
                     </li>
                     <li>
-                        <button class="bg-black/20 px-4 py-1 rounded-full disabled:opacity-50" :disabled="playerMove" @click="makeMove('paper')">
+                        <button
+                            class="bg-black/20 px-4 py-1 rounded-full disabled:opacity-50"
+                            :disabled="playerMove"
+                            @click="makeMove('paper')">
                             📄 Paper
                         </button>
                     </li>
                     <li>
-                        <button class="bg-black/20 px-4 py-1 rounded-full disabled:opacity-50" :disabled="playerMove" @click="makeMove('scissors')">
+                        <button
+                            class="bg-black/20 px-4 py-1 rounded-full disabled:opacity-50"
+                            :disabled="playerMove"
+                            @click="makeMove('scissors')">
                             ✂️ Scissors
                         </button>
                     </li>
@@ -188,7 +202,9 @@ onMounted(() => {
             </div>
             <div v-if="playerMove">
                 <p>You chose: {{ playerMove }}</p>
-                <p v-if="!opponentMove">Waiting for opponent to choose...</p>
+                <p v-if="!opponentMove">
+                    Waiting for opponent to choose...
+                </p>
             </div>
 
             <div v-if="opponentMove && playerMove">
@@ -201,13 +217,21 @@ onMounted(() => {
             <hr>
             <div v-if="winner">
                 <strong>Winner:</strong>
-                <p v-if="winner === 'draw'">It's a draw!</p>
+                <p v-if="winner === 'draw'">
+                    It's a draw!
+                </p>
                 <div v-else>
-                    <p v-if="winner === currentPlayer">You win!</p>
-                    <p v-if="winner === opponentPlayer">You lose!</p>
+                    <p v-if="winner === currentPlayer">
+                        You win!
+                    </p>
+                    <p v-if="winner === opponentPlayer">
+                        You lose!
+                    </p>
                 </div>
 
-                <button v-if="!rematchRequested" @click="requestRematch">
+                <button
+                    v-if="!rematchRequested"
+                    @click="requestRematch">
                     Request rematch
                 </button>
 
