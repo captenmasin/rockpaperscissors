@@ -25,6 +25,13 @@ class NewGame
             'player_one' => $request->user()->id,
         ]);
 
+        Pirsch::track(
+            name: 'Game created',
+            meta: [
+                'game_id' => $game->id,
+            ]
+        );
+
         return redirect()->route('game', $game);
     }
 

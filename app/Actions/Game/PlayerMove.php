@@ -7,6 +7,7 @@ use App\Events\PlayerMoved;
 use App\Models\Game;
 use Illuminate\Http\Request;
 use Lorisleiva\Actions\Concerns\AsAction;
+use Pirsch\Facades\Pirsch;
 
 class PlayerMove
 {
@@ -23,6 +24,14 @@ class PlayerMove
             $game->player_two_move = $move;
         }
 
+        Pirsch::track(
+            name: 'Move made',
+            meta: [
+                'game_id' => $game->id,
+                'move' => $move,
+            ]
+        );
+
         $game->save();
 
         event(new PlayerMoved($game->id, $playerId));
@@ -31,6 +40,15 @@ class PlayerMove
             $winner = $game->determineWinner();
             $game->winner = $winner;
             $game->save();
+
+            Pirsch::track(
+                name: 'Game finished',
+                meta: [
+                    'game_id' => $game->id,
+                    'winner' => $winner,
+                    'winning_move' => $winner === $game->player_one ? $game->player_one_move : $game->player_two_move,
+                ]
+            );
 
             event(new GameResult($game, $winner));
         }
