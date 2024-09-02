@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import {router, usePage} from '@inertiajs/vue3';
-import axios from 'axios';
+import {ref, onMounted, computed} from 'vue';
+import {Link, router, usePage} from '@inertiajs/vue3';
 
 const props = defineProps({
-    game: Object
+    game: Object,
+    gameFinished: Boolean,
+    currentPlayer: String,
+    opponentPlayer: String,
+    currentPlayerMove: String,
+    opponentPlayerMove: String,
+    winner: String,
 });
 
 const count = ref(0);
@@ -12,10 +17,10 @@ const currentUser = usePage().props.user;
 const playerMove = ref(null);
 const opponentMove = ref(null);
 const opponentHasMoved = ref(false);
-const gameResult = ref(null);
+const winner = ref(null);
 
 const makeMove = async (move) => {
-    router.post(`/game/${props.game.uuid}/move`, { move: move }, {
+    router.post(`/game/${props.game.uuid}/move`, {move: move}, {
         preserveScroll: true,
         onSuccess: (data) => {
             playerMove.value = move;
@@ -27,6 +32,16 @@ const makeMove = async (move) => {
 };
 
 onMounted(() => {
+    if (props.currentPlayerMove) {
+        playerMove.value = props.currentPlayerMove;
+    }
+
+    if (props.gameFinished) {
+        opponentHasMoved.value = true;
+        opponentMove.value = props.opponentPlayerMove;
+        winner.value = props.winner;
+    }
+
     Echo.join(`game.${props.game.id}`)
         .here((users) => {
             count.value = users.length;
@@ -50,40 +65,70 @@ onMounted(() => {
                 opponentMove.value = event.game.player_one_move;
             }
 
-            gameResult.value = event.winner;
+            winner.value = event.winner;
         });
 });
 </script>
 
 <template>
     <div>
-        <h1>Game</h1>
-        <h2>Count: {{ count }}</h2>
-        <h3>Current user {{ currentUser }}</h3>
-        <h3>You are {{ parseInt(game.player_one) === currentUser.id ? 'Player one' : 'Player two' }}</h3>
+        <div class="flex justify-between">
+            <h1>Game: {{ game.uuid }}</h1>
+            <Link href="/game/new">
+                New game
+            </Link>
+        </div>
+        <h2>Current players: {{ count }}</h2>
+        <!--        <h3>Current user {{ currentUser }}</h3>-->
+        <!--        <h3>You are {{ parseInt(game.player_one) === currentUser.id ? 'Player one' : 'Player two' }}</h3>-->
         <hr>
-        <div>
-            <button @click="makeMove('rock')">Rock</button>
-            <button @click="makeMove('paper')">Paper</button>
-            <button @click="makeMove('scissors')">Scissors</button>
-        </div>
-        <div v-if="playerMove">
-            <p>You chose: {{ playerMove }}</p>
-        </div>
-        <div v-if="opponentMove && playerMove">
-            <p>Opponent chose: {{ opponentMove }}</p>
+        <div v-if="currentPlayer === 'spectator'">
+            <p>You have missed the game</p>
         </div>
 
-        <div v-if="opponentHasMoved && !playerMove">
-            <p>Opponent has chosen</p>
+        <div v-else>
+            <div v-if="count === 2">
+                <p>Choose your move:</p>
+                <ul class="flex items-center gap-8 text-4xl mt-8">
+                    <li>
+                        <button class="bg-black/20 px-4 py-1 rounded-full disabled:opacity-50" :disabled="playerMove" @click="makeMove('rock')">
+                            🪨 Rock
+                        </button>
+                    </li>
+                    <li>
+                        <button class="bg-black/20 px-4 py-1 rounded-full disabled:opacity-50" :disabled="playerMove" @click="makeMove('paper')">
+                            📄 Paper
+                        </button>
+                    </li>
+                    <li>
+                        <button class="bg-black/20 px-4 py-1 rounded-full disabled:opacity-50" :disabled="playerMove" @click="makeMove('scissors')">
+                            ✂️ Scissors
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div v-if="playerMove">
+                <p>You chose: {{ playerMove }}</p>
+                <p v-if="!opponentMove">Waiting for opponent to choose...</p>
+            </div>
+
+            <div v-if="opponentMove && playerMove">
+                <p>Opponent chose: {{ opponentMove }}</p>
+            </div>
+
+            <div v-if="opponentHasMoved && !playerMove">
+                <p>Opponent has chosen, it's your turn</p>
+            </div>
+            <hr>
+            <div v-if="winner">
+                <strong>Winner:</strong>
+                <p v-if="winner === 'draw'">It's a draw!</p>
+                <div v-else>
+                    <p v-if="winner === currentPlayer">You win!</p>
+                    <p v-if="winner === opponentPlayer">You lose!</p>
+                </div>
+            </div>
         </div>
-        <hr>
-        <div v-if="gameResult">
-            <p v-if="gameResult === 'draw'">It's a draw!</p>
-            <p v-else>
-                {{ gameResult === (parseInt(game.player_one) === currentUser.id ? 'player_one' : 'player_two') ? 'You win!' : 'You lose!' }}
-            </p>
-        </div>
-<!--        {{ game }}-->
+        <!--        {{ game }}-->
     </div>
 </template>

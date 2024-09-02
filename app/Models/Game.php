@@ -9,6 +9,14 @@ class Game extends Model
 {
     use HasFactory;
 
+    protected function casts(): array
+    {
+        return [
+            'player_one' => 'integer',
+            'player_two' => 'integer',
+        ];
+    }
+
     protected $fillable = [
         'uuid',
         'player_one',
@@ -18,9 +26,22 @@ class Game extends Model
         'winner'
     ];
 
-    public function alreadyPlayed(): bool
+    public function finished(): bool
     {
         return $this->player_one_move && $this->player_two_move;
+    }
+
+    public function started(): bool
+    {
+        return $this->player_one_move || $this->player_two_move;
+    }
+
+    public function getMovesAttribute(): array
+    {
+        return [
+            'player_one' => $this->player_one_move,
+            'player_two' => $this->player_two_move,
+        ];
     }
 
     public function determineWinner()
