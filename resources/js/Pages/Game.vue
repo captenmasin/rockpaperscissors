@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Share from '@/Components/Share.vue'
 import { ref, onMounted, computed } from 'vue'
+import { useRoute } from '@/Composables/useRoute.ts'
 import { Link, router, usePage } from '@inertiajs/vue3'
 
 const props = defineProps({
@@ -10,7 +11,7 @@ const props = defineProps({
     opponentPlayer: String,
     currentPlayerMove: String,
     opponentPlayerMove: String,
-    winner: String
+    winnerPlayer: String
 })
 
 const count = ref(0)
@@ -22,7 +23,7 @@ const winner = ref(null)
 const rematchRequested = ref(false)
 
 const makeMove = async (move) => {
-    router.post(`/game/${props.game.uuid}/move`, { move }, {
+    router.post(useRoute('game.move', props.game.uuid), { move }, {
         preserveScroll: true,
         onSuccess: (data) => {
             playerMove.value = move
@@ -34,7 +35,7 @@ const makeMove = async (move) => {
 }
 
 function joinGame () {
-    router.post(`/game/${props.game.uuid}/join`, {}, {
+    router.post(useRoute('game.join', props.game.uuid), {}, {
         preserveScroll: true,
         onSuccess: (data) => {
             router.reload()
@@ -46,7 +47,7 @@ function joinGame () {
 }
 
 function requestRematch () {
-    router.post(`/game/${props.game.uuid}/rematch`, {}, {
+    router.post(useRoute('game.rematch', props.game.uuid), {}, {
         preserveScroll: true,
         onSuccess: (data) => {
             router.reload()
@@ -58,7 +59,7 @@ function requestRematch () {
 }
 
 function denyRematch () {
-    router.post(`/game/${props.game.uuid}/rematch/deny`, {}, {
+    router.post(useRoute('game.rematch.deny', props.game.uuid), {}, {
         preserveScroll: true,
         onSuccess: (data) => {
             router.reload()
@@ -70,7 +71,7 @@ function denyRematch () {
 }
 
 function acceptRematch () {
-    router.post(`/game/${props.game.uuid}/rematch/accept`, {}, {
+    router.post(useRoute('game.rematch.accept', props.game.uuid), {}, {
         preserveScroll: true,
         onSuccess: (data) => {
             router.reload()
@@ -101,7 +102,7 @@ onMounted(() => {
     if (props.gameFinished) {
         opponentHasMoved.value = true
         opponentMove.value = props.opponentPlayerMove
-        winner.value = props.winner
+        winner.value = props.winnerPlayer
     }
 
     Echo.join(`game.${props.game.id}`)
@@ -153,13 +154,13 @@ onMounted(() => {
     <div>
         <div class="flex justify-between">
             <h1>Game: {{ game.uuid }}</h1>
-            <Link href="/game/new">
+            <Link :href="useRoute('game.new')">
                 New game
             </Link>
         </div>
         <hr>
         <Share
-            :url="`/${game.uuid}`"
+            :url="useRoute('game', game.uuid)"
             title="Play Rock Paper Scissors"
             description="Join the game" />
         <h2>Current players: {{ count }}</h2>

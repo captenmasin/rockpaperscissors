@@ -27,7 +27,7 @@ class ShowGame
             'gameFinished' => $game->finished(),
             'currentPlayerMove' => $this->getCurrentPlayerMove($request->user(), $game),
             'opponentPlayerMove' => $game->finished() ? $this->getOpponentPlayerMove($request->user(), $game) : null,
-            'winner' => $game->finished() ? $game->winner : null,
+            'winnerPlayer' => $game->finished() ? $game->winner : null,
         ]);
     }
 

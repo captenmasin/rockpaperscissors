@@ -45,6 +45,18 @@ export default defineConfig({
             refresh: true,
             detectTls: APP_DOMAIN
         }),
+        run([
+            {
+                name: 'generate routes',
+                run: ['php', 'artisan', 'ziggy:generate'],
+                pattern: ['routes/*.php']
+            },
+            {
+                name: 'generate route types',
+                run: ['php', 'artisan', 'generate-route-types'],
+                pattern: ['routes/*.php']
+            }
+        ]),
         vuePlugin({
             template: {
                 transformAssetUrls: {
