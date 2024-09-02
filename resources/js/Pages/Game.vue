@@ -35,7 +35,7 @@ function joinGame(){
     router.post(`/game/${props.game.uuid}/join`, {}, {
         preserveScroll: true,
         onSuccess: (data) => {
-            location.reload()
+            router.reload()
         },
         onError: (error) => {
             console.error('Failed to join game');
