@@ -1,0 +1,34 @@
+{
+  "include": [
+    "resources/**/*.ts",
+    "resources/**/*.d.ts",
+    "resources/**/*.vue",
+  ],
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "es2022",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "allowImportingTsExtensions": true,
+    "strict": false,
+    "noEmit": true,
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "verbatimModuleSyntax": true,
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "jsxImportSource": "vue",
+    "noImplicitThis": true,
+    "types": [
+      "vite/client"
+    ],
+    "paths": {
+      "@/*": [
+        "resources/js/*"
+      ]
+    }
+  }
+}
