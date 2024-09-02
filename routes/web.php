@@ -8,3 +8,4 @@ Route::get('game/new', App\Actions\Game\NewGame::class)->middleware('auth')->nam
 
 Route::get('{game:uuid}', App\Actions\Pages\ShowGame::class)->name('game');
 Route::post('/game/{game:uuid}/move', \App\Actions\Game\PlayerMove::class)->middleware('auth');
+Route::post('/game/{game:uuid}/join', \App\Actions\Game\JoinGame::class)->middleware('auth');

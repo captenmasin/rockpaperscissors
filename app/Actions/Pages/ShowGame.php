@@ -4,22 +4,20 @@ namespace App\Actions\Pages;
 
 use App\Models\Game;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class ShowGame
 {
     use AsAction;
 
-    public function handle(Request $request, Game $game)
+    public function handle(Request $request, Game $game): RedirectResponse|Response
     {
-        if (empty($game->player_one)){
-            $game->update(['player_one' => $request->user()->id]);
-        }
-
-        if (empty($game->player_two) && $game->player_one !== $request->user()->id){
-            $game->update(['player_two' => $request->user()->id]);
+        if ($game->finished() && $request->user()->id !== $game->player_one && $request->user()->id !== $game->player_two) {
+            return redirect()->route('home');
         }
 
         return Inertia::render('Game', [
@@ -31,6 +29,24 @@ class ShowGame
             'opponentPlayerMove' => $game->finished() ? $this->getOpponentPlayerMove($request->user(), $game) : null,
             'winner' => $game->finished() ? $game->winner : null,
         ]);
+    }
+
+    public function updatePlayers(Request $request, Game $game)
+    {
+//        if (!$request->user()){
+//            return;
+//        }
+//        if ($game->finished()){
+//            return;
+//        }
+//
+//        if (empty($game->player_one)){
+//            $game->update(['player_one' => $request->user()->id]);
+//        }
+//
+//        if (empty($game->player_two) && $game->player_one !== $request->user()->id){
+//            $game->update(['player_two' => $request->user()->id]);
+//        }
     }
 
     public function getCurrentPlayer(User $user, Game $game)

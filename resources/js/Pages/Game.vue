@@ -31,9 +31,25 @@ const makeMove = async (move) => {
     });
 };
 
+function joinGame(){
+    router.post(`/game/${props.game.uuid}/join`, {}, {
+        preserveScroll: true,
+        onSuccess: (data) => {
+            location.reload()
+        },
+        onError: (error) => {
+            console.error('Failed to join game');
+        }
+    });
+}
+
 onMounted(() => {
     if (props.currentPlayerMove) {
         playerMove.value = props.currentPlayerMove;
+    }
+
+    if((!props.game.player_two || !props.game.player_one) && props.currentPlayer === 'spectator'){
+        joinGame();
     }
 
     if (props.gameFinished) {
