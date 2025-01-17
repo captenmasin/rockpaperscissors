@@ -4,6 +4,8 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
+    <x-inertia-seo::meta/>
+
     @env('production')
         <script defer src="https://api.pirsch.io/pa.js" id="pianjs" data-code="h7peBOfIackd04AC5JDrkpQxGHUpMUX2"></script>
     @endenv

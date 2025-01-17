@@ -154,9 +154,6 @@ onMounted(() => {
     <div>
         <div class="flex justify-between">
             <h1>Game: {{ game.uuid }}</h1>
-            <Link :href="useRoute('game.new')">
-                New game
-            </Link>
         </div>
         <hr>
         <Share

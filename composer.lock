@@ -4,8 +4,80 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca841f569d1651a341ade9c70724cf49",
+    "content-hash": "7051670962d0e1e28fa945f3fc6015cf",
     "packages": [
+        {
+            "name": "artesaos/seotools",
+            "version": "v1.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/artesaos/seotools.git",
+                "reference": "44920c7408c927f63c505aadcf35037c55c0a818"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/artesaos/seotools/zipball/44920c7408c927f63c505aadcf35037c55c0a818",
+                "reference": "44920c7408c927f63c505aadcf35037c55c0a818",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/config": "^10.0 || ^11.0",
+                "illuminate/support": "^10.0 || ^11.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0 || ^9.0",
+                "phpspec/phpspec": "~5.1.1 || ^6.0 || ^7.0",
+                "phpunit/phpunit": "^9.0 || ^10.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Artesaos\\SEOTools\\Providers\\SEOToolsServiceProvider"
+                    ],
+                    "aliases": {
+                        "SEOMeta": "Artesaos\\SEOTools\\Facades\\SEOMeta",
+                        "OpenGraph": "Artesaos\\SEOTools\\Facades\\OpenGraph",
+                        "Twitter": "Artesaos\\SEOTools\\Facades\\TwitterCard",
+                        "JsonLd": "Artesaos\\SEOTools\\Facades\\JsonLd",
+                        "SEO": "Artesaos\\SEOTools\\Facades\\SEOTools"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Artesaos\\SEOTools\\": "src/SEOTools/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vinicius",
+                    "email": "luiz.vinicius73@gmail.com"
+                }
+            ],
+            "description": "SEO Tools for Laravel and Lumen",
+            "keywords": [
+                "JSON-LD",
+                "laravel",
+                "lumen",
+                "metatags",
+                "opengraph",
+                "seo",
+                "seotools",
+                "webmaster"
+            ],
+            "support": {
+                "issues": "https://github.com/artesaos/seotools/issues",
+                "source": "https://github.com/artesaos/seotools"
+            },
+            "time": "2024-05-20T12:43:47+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.12.1",
@@ -65,6 +137,103 @@
                 }
             ],
             "time": "2023-11-29T23:19:16+00:00"
+        },
+        {
+            "name": "captenmasin/inertia-seo",
+            "version": "v0.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/captenmasin/inertia-seo.git",
+                "reference": "3f230070e3fd10dfcc806107354fac38ba78a101"
+            },
+            "require": {
+                "artesaos/seotools": "^1.3",
+                "illuminate/contracts": "^10.0||^11.0",
+                "inertiajs/inertia-laravel": "^1.3",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.14",
+                "nunomaduro/collision": "^8.1.1||^7.10.0",
+                "orchestra/testbench": "^9.0.0||^8.22.0",
+                "pestphp/pest": "^2.34",
+                "pestphp/pest-plugin-arch": "^2.7",
+                "pestphp/pest-plugin-laravel": "^2.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Captenmasin\\InertiaSeo\\InertiaSeoServiceProvider"
+                    ],
+                    "aliases": {
+                        "InertiaSeo": "Captenmasin\\InertiaSeo\\Facades\\InertiaSeo"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Captenmasin\\InertiaSeo\\": "src/",
+                    "Captenmasin\\InertiaSeo\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Captenmasin\\InertiaSeo\\Tests\\": "tests/",
+                    "Workbench\\App\\": "workbench/app/"
+                }
+            },
+            "scripts": {
+                "post-autoload-dump": [
+                    "@composer run prepare"
+                ],
+                "clear": [
+                    "@php vendor/bin/testbench package:purge-inertia-seo --ansi"
+                ],
+                "prepare": [
+                    "@php vendor/bin/testbench package:discover --ansi"
+                ],
+                "build": [
+                    "@composer run prepare",
+                    "@php vendor/bin/testbench workbench:build --ansi"
+                ],
+                "start": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "@composer run build",
+                    "@php vendor/bin/testbench serve"
+                ],
+                "analyse": [
+                    "vendor/bin/phpstan analyse"
+                ],
+                "test": [
+                    "vendor/bin/pest"
+                ],
+                "test-coverage": [
+                    "vendor/bin/pest --coverage"
+                ],
+                "format": [
+                    "vendor/bin/pint"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mason Day",
+                    "email": "daymason@hotmail.co.uk",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This is my package inertia-seo",
+            "homepage": "https://github.com/captenmasin/inertia-seo",
+            "keywords": [
+                "Mason Day",
+                "inertia-seo",
+                "laravel"
+            ],
+            "time": "2024-09-03T08:28:17+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",

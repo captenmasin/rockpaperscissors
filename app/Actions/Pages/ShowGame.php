@@ -28,6 +28,8 @@ class ShowGame
             'currentPlayerMove' => $this->getCurrentPlayerMove($request->user(), $game),
             'opponentPlayerMove' => $game->finished() ? $this->getOpponentPlayerMove($request->user(), $game) : null,
             'winnerPlayer' => $game->finished() ? $game->winner : null,
+        ])->withMeta([
+            'title' => 'Game',
         ]);
     }
 
